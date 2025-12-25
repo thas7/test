@@ -19,5 +19,108 @@
   <command><button>send</button></command>
   <background-color>shiny blue</background-color>
 </table>
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<title>Aplikasi Penugasan Pejabat</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f4f6f8;
+        padding: 20px;
+    }
+    .box {
+        background: white;
+        padding: 15px;
+        margin-bottom: 20px;
+        border-radius: 6px;
+        box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+    input, textarea, button {
+        width: 100%;
+        padding: 8px;
+        margin-top: 6px;
+    }
+    button {
+        background: #007bff;
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+    button:hover {
+        background: #0056b3;
+    }
+    .senarai {
+        background: #eef;
+        padding: 10px;
+        margin-top: 10px;
+    }
+</style>
+</head>
+<body>
+
+<h2>Aplikasi Pengumpulan Senarai Nama</h2>
+
+<!-- BORANG PEJABAT -->
+<div class="box">
+    <h3>Pejabat Lain - Hantar Senarai Nama</h3>
+    <label>Nama Pejabat</label>
+    <input type="text" id="pejabat" placeholder="Contoh: Pejabat Daerah A">
+
+    <label>Senarai Nama (satu baris satu nama)</label>
+    <textarea id="nama" rows="5" placeholder="Ali&#10;Abu&#10;Siti"></textarea>
+
+    <button onclick="hantar()">Hantar</button>
+</div>
+
+<!-- PAPARAN ADMIN -->
+<div class="box">
+    <h3>Admin - Senarai Diterima</h3>
+    <div id="papar"></div>
+</div>
+
+<script>
+function hantar() {
+    let pejabat = document.getElementById("pejabat").value;
+    let nama = document.getElementById("nama").value;
+
+    if (pejabat === "" || nama === "") {
+        alert("Sila isi semua maklumat");
+        return;
+    }
+
+    let data = JSON.parse(localStorage.getItem("senarai")) || [];
+    data.push({ pejabat: pejabat, nama: nama });
+
+    localStorage.setItem("senarai", JSON.stringify(data));
+
+    document.getElementById("pejabat").value = "";
+    document.getElementById("nama").value = "";
+
+    paparData();
+}
+
+function paparData() {
+    let data = JSON.parse(localStorage.getItem("senarai")) || [];
+    let html = "";
+
+    data.forEach((item, index) => {
+        html += `
+        <div class="senarai">
+            <strong>${index + 1}. ${item.pejabat}</strong><br>
+            ${item.nama.replace(/\n/g, "<br>")}
+        </div>
+        `;
+    });
+
+    document.getElementById("papar").innerHTML = html;
+}
+
+paparData();
+</script>
+
+</body>
+</html>
 
 </html>
