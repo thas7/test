@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <title>Sistem Pentadbiran Pejabat</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f2f2;
+            margin: 0;
+            padding: 20px;
+        }
+        h1, h2 {
+            text-align: center;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        label {
+            font-weight: bold;
+        }
+        input, textarea, button {
+            width: 100%;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            padding: 10px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        .admin {
+            background: #eef5ff;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 30px;
+        }
+        .danger {
+            background: #dc3545;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Sistem Urusan Pentadbiran Pejabat</h1>
+
+    <!-- BORANG PEJABAT -->
+    <h2>Hantar Senarai Nama</h2>
+    <label>Nama Pejabat</label>
+    <input type="text" id="officeName" placeholder="Contoh: Pejabat Kewangan">
+
+    <label>Senarai Nama (satu baris satu nama)</label>
+    <textarea id="nameList" rows="5" placeholder="Ali bin Abu&#10;Siti binti Ahmad"></textarea>
+
+    <button onclick="hantarData()">Hantar kepada Admin</button>
+
+    <!-- ADMIN PANEL -->
+    <div class="admin">
+        <h2>Panel Admin</h2>
+        <button onclick="paparData()">Papar Semua Senarai</button>
+
+        <table id="dataTable">
+            <thead>
+                <tr>
+                    <th>Pejabat</th>
+                    <th>Nama</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+        <button class="danger" onclick="padamData()">Padam Semua Data (Selepas Penugasan)</button>
+    </div>
+</div>
+
+<script>
+    function hantarData() {
+        const office = document.getElementById("officeName").value;
+        const names = document.getElementById("nameList").value;
+
+        if (office === "" || names === "") {
+            alert("Sila lengkapkan semua maklumat");
+            return;
+        }
+
+        let data = JSON.parse(localStorage.getItem("senarai")) || [];
+
+        names.split("\n").forEach(nama => {
+            if (nama.trim() !== "") {
+                data.push({ office: office, name: nama.trim() });
+            }
+        });
+
+        localStorage.setItem("senarai", JSON.stringify(data));
+        alert("Senarai berjaya dihantar!");
+
+        document.getElementById("officeName").value = "";
+        document.getElementById("nameList").value = "";
+    }
+
+    function paparData() {
+        const tableBody = document.querySelector("#dataTable tbody");
+        tableBody.innerHTML = "";
+
+        let data = JSON.parse(localStorage.getItem("senarai")) || [];
+
+        data.forEach(item => {
+            let row = document.createElement("tr");
+            row.innerHTML = `<td>${item.office}</td><td>${item.name}</td>`;
+            tableBody.appendChild(row);
+        });
+    }
+
+    function padamData() {
+        if (confirm("Anda pasti mahu padam semua data?")) {
+            localStorage.removeItem("senarai");
+            paparData();
+        }
+    }
+</script>
+
+</body>
+</html>
